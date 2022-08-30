@@ -1,10 +1,3 @@
-    _   __     __  ______                      __
-   / | / /__  / /_/ ____/___  __  ______  ____/ /______  __
-  /  |/ / _ \/ __/ /_  / __ \/ / / / __ \/ __  / ___/ / / /
- / /|  /  __/ /_/ __/ / /_/ / /_/ / / / / /_/ / /  / /_/ /
-/_/ |_/\___/\__/_/    \____/\__,_/_/ /_/\__,_/_/   \__, /
-                                                  /____/
-                                                  
 # NetFoundry Edge Router OEM Image Tooling #
 
 This documentation is for customers of the NetFoundry NPaaS (https://nfconsole.io) that wish to create their own branded and modified renditon of the available NetFoundry Edge Router image located in various different cloud marketplaces as well for bare-metal hypervisors.  Please see the available images and links to cloud marketplaces at (https://netfoundry.io/downloads). 
@@ -16,9 +9,9 @@ This utility continues the workflow which has established the image containing a
 This tool, created and maintained by Hashicorp, handles launching a virtual machine in various platforms and producing an "image" that usable in each.  Find out more information at (https://www.packer.io/).  NetFoundry provides some example configurations based on the following plugins:
 
 1. AWS - https://www.packer.io/plugins/builders/amazon/ebs
-1. Azure - https://www.packer.io/plugins/builders/azure
-1. GCP - https://www.packer.io/plugins/builders/googlecompute
-1. VirtualBox - https://www.packer.io/plugins/builders/virtualbox/ovf
+2. Azure - https://www.packer.io/plugins/builders/azure
+3. GCP - https://www.packer.io/plugins/builders/googlecompute
+4. VirtualBox - https://www.packer.io/plugins/builders/virtualbox/ovf
 
 To download and install Packer see: https://www.packer.io/downloads
 
@@ -45,12 +38,31 @@ Each Packer configuration requires authentication to launch a virtual machine in
 Target: You wish to change only the ASCII art logo that is displayed upon login to the Edge Router such that it displays your company logo.  You want to make the virtual machine image that results from this available in AWS.
 
 1. Clone this project and change into the project folder.
-1. Update and save new ASCII art located in the file "ansible/roles/common/files/custom.logo" with the editor of your choice (EG VIM).
-1. Review, modify, and save the "assume_role" section to match credentials permitted to perform launch and save functions in AWS in the file "aws.json".  Review the Packer "AWS" link above for options and methods of credential presentation as needed.
-1. Export key variables required for the building process in the SHELL.
-2. export BUILD_NAME="CustomBuild"
-2. export VERSION_NUMBER="1.0.0"
-1. You may optionally validate your Packer configuration with "packer validate aws.json" or build it immediately with "packer build aws.json".
+``` 
+git clone https://github.com/netfoundry/edge-router-oem
+cd edge-router-oem
+```
+3. Update and save new ASCII art located in the file "ansible/roles/common/files/custom.logo" with the editor of your choice (EG VIM).
+```
+vi ansible/roles/common/files/custom.logo
+```
+4. Review, modify, and save the "assume_role" section to match credentials permitted to perform launch and save functions in AWS in the file "aws.json".  Review the Packer "AWS" link above for options and methods of credential presentation as needed.
+```
+vi aws.json
+```
+6. Export key variables required for the building process in the SHELL.
+```
+export BUILD_NAME="CustomBuild"
+export VERSION_NUMBER="1.0.0"
+```
+5. You may optionally validate your Packer configuration with:
+```
+packer validate aws.json
+```
+6. Build the new image with:
+```
+packer build aws.json
+```
 
 Result: Packer will find, download, and launch the NetFoundry Edge Router image in your VPC.  It will log into the SHELL of the running instance and launch Ansible with the modifications specified in the "ansible" directory.  This includes the new ASCII logo being placed into the appropriate place on the file system to be read upon user login.  After modifications are completed, Packer will stop the image, create a snapshot of it, form an Amazon Machine Image (AMI) from it, store it on the cloud, and remove the staging files used to create it.  You will be left with a new image (AMI) that contains all the modifications made and is ready to launch into an instance.
 
