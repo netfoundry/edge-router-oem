@@ -1,0 +1,9 @@
+---
+
+- name: Apply the common role
+  hosts: all
+  become: true
+  become_user: root
+  roles:
+    - { role: common, tags: ["common"] }
+    - { role: cleanup, tags: ["cleanup"] }

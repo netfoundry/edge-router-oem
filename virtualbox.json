@@ -1,0 +1,59 @@
+{
+  "variables": {
+    "working_directory": "."
+  },
+  "builders": [
+    {
+      "type": "virtualbox-ovf",
+      "source_path": "https://objectstorage.us-ashburn-1.oraclecloud.com/n/idqvhb5g0xic/b/bucket-disk-image/o/nf-edge-router-virtualbox.ova",
+      "vm_name": "ubuntu-base-x86_64",
+      "name": "ubuntu-base-x86_64",
+      "format": "ova",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{ .Name }}",
+          "--nic1",
+          "nat",
+          "--nictype1",
+          "virtio"
+        ]
+      ],
+      "boot_wait": "3s",
+      "headless": true,
+
+      "ssh_username": "ziggy",
+      "ssh_password": "ziggy",
+      "ssh_handshake_attempts": "100",
+      "ssh_timeout": "10000s"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "groups": ["gcp"],
+      "playbook_file": "{{user `working_directory`}}/ansible/image-build.yml",
+      "extra_arguments": [
+        "--extra-vars", "build_version={{user `build_version`}}",
+        "-v"
+      ]  
+    },
+    {
+      "inline": [
+        "set -x",
+        "sudo apt-get update",
+        "sudo apt-get upgrade --yes --autoremove --with-new-pkgs",
+        "sudo dd if=/dev/zero of=/EMPTY bs=1M || echo dd exit code $? is suppressed",
+        "sudo rm -f /EMPTY",
+        "sudo dd if=/dev/zero of=/var/EMPTY bs=1M || echo dd exit code $? is suppressed",
+        "sudo rm -f /var/EMPTY",
+        "sudo swapoff /swap.img",
+        "sudo rm /swap.img",
+        "sudo sed -ri '/\\sswap\\s/s/^#?/#/' /etc/fstab",
+        "sudo sync"
+
+      ],
+      "type": "shell"
+    }
+  ]
+}

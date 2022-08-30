@@ -1,0 +1,19 @@
+---
+
+- name: Copy custom logo to profile
+  copy:
+    src: custom.logo
+    dest: /etc/profile.d/
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Download login message
+  get_url:
+    url: https://netfoundry.jfrog.io/artifactory/router-registration/nf_login_msg/latest/nf_login_msg.sh
+    dest: /etc/profile.d/nf_login_msg.sh
+    owner: root
+    group: root
+    mode: 0755
+
+...

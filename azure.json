@@ -1,0 +1,63 @@
+{
+  "variables": {
+    "azure_tenant_id": "{{env `ARM_TENANT_ID`}}",
+    "azure_client_id": "{{env `ARM_CLIENT_ID`}}",
+    "azure_client_secret": "{{env `ARM_CLIENT_SECRET`}}",
+    "azure_subscription_id": "{{env `ARM_SUBSCRIPTION_ID`}}",
+    "azure_build_resource_group_name": "{{env `ARM_BUILD_RESOURCE_GROUP_NAME`}}",
+    "azure_resource_group_name": "{{env `ARM_RESOURCE_GROUP_NAME`}}",
+    "azure_storage_account": "{{env `ARM_STORAGE_ACCOUNT`}}",
+    "working_directory": ".",
+    "build_version": "{{env `VERSION_NUMBER`}}",
+    "ssh_username": "packer"
+  },
+  "builders": [
+    {
+      "type": "azure-arm",
+      "client_id": "{{user `azure_client_id`}}",
+      "client_secret": "{{user `azure_client_secret`}}",
+      "resource_group_name": "{{user `azure_resource_group_name`}}",
+      "build_resource_group_name": "{{user `azure_build_resource_group_name`}}",
+      "capture_container_name": "builds",
+      "capture_name_prefix": "ub{{ user `build_version`}}",
+      "subscription_id": "{{user `azure_subscription_id`}}",
+      "tenant_id": "{{user `azure_tenant_id`}}",
+      "storage_account": "{{user `azure_storage_account`}}",
+      "os_type": "Linux",
+      "image_publisher": "netfoundryinc",
+      "image_offer": "ziti-edge-router",
+      "image_sku": "ziti-edge-router",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_pty": true,
+      "vm_size": "Standard_DS1"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "groups": [ "azure" ],
+      "user": "{{user `ssh_username`}}",
+      "playbook_file": "{{user `working_directory`}}/ansible/image-build.yml",
+      "extra_arguments": [
+        "--extra-vars", "build_version={{user `build_version`}}",
+        "--extra-vars", "ansible_python_interpreter=/usr/bin/python3",
+        "--skip-tags", "ntp,chrony,udf,vfat,nftables,iptables,ip6tables,auditd,pam",
+        "-v"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo '{{user `ssh_pass`}}' | {{ .Vars }} sudo -S -E '{{ .Path }}'",
+      "inline_shebang": "/bin/bash -eux",
+      "inline": [
+        "set -o pipefail",
+        "/usr/sbin/waagent -force -deprovision+user",
+        "history -c",
+        "unset HISTFILE",
+        "sync"
+      ],
+      "skip_clean": "true"
+    }
+  ]
+}
+

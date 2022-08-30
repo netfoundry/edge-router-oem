@@ -1,0 +1,40 @@
+{
+    "variables": {
+        "ssh_username": "ziggy",
+        "working_directory": ".",
+        "account_file": "{{env `GCP_ACCOUNT_FILE`}}",
+        "project_id": "{{env `GCP_PROJECT_ID`}}",
+        "build_name": "{{env `BUILD_NAME`}}",
+        "build_version": "{{env `VERSION_NUMBER`}}"
+    },
+    "builders": [
+        {
+            "type": "googlecompute",
+            "account_file": "{{user `account_file`}}",
+            "project_id": "{{user `project_id`}}",
+            "source_image": "https://www.googleapis.com/compute/v1/projects/netfoundry-marketplace-public/global/images/nf-ub-1-10-20220719",
+            "ssh_username": "{{user `ssh_username`}}",
+            "image_name": "{{ user `build_name`}}-{{ user `build_version`}}",
+            "disk_size": 20,
+            "machine_type": "n1-standard-1",
+            "zone": "us-central1-a",
+            "image_labels":{
+                "buildversion": "{{ user `build_version`}}"
+            },
+            "labels":{
+                "buildversion": "{{ user `build_version`}}"
+            }       
+        }
+    ],
+    "provisioners": [
+        {
+          "type": "ansible",
+          "groups": ["gcp"],
+          "playbook_file": "{{user `working_directory`}}/ansible/image-build.yml",
+          "extra_arguments": [
+            "--extra-vars", "build_version={{user `build_version`}}",
+            "-v"
+          ]  
+        }
+    ]
+}

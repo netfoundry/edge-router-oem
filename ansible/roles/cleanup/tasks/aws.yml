@@ -1,0 +1,11 @@
+
+- name: reset cloud-init
+  command: "cloud-init clean"
+
+- name: Cleanup directories
+  command: "rm -rf {{ item }}"
+  with_items:
+    - '/home/ubuntu/.ssh'
+    - '/var/log/cloud-init.log'
+    - '/var/log/cloud-init-output.log'
+

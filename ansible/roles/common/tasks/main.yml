@@ -1,0 +1,22 @@
+---
+
+- name: Common
+  include: common.yml
+
+- name: Configure for AWS
+  include: aws.yml
+  when: "'aws' in group_names"
+
+- name: Configure for Azure
+  include: azure.yml
+  when: "'azure' in group_names"
+
+- name: Configure for GCP
+  include: gcp.yml
+  when: "'gcp' in group_names"
+
+- name: Configure for VirtualBox
+  include: virtualbox.yml
+  when: "'virtualbox' in group_names" 
+  
+...

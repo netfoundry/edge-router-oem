@@ -1,0 +1,42 @@
+---
+### This should always be the final step
+
+### Global Cleanup
+
+
+### Platform specific Cleanup
+
+
+- name: Configure for AWS
+  include: aws.yml
+  when: "'aws' in group_names"
+
+- name: Configure for Azure
+  include: azure.yml
+  when: "'azure' in group_names"
+
+- name: Configure for GCP
+  include: gcp.yml
+  when: "'gcp' in group_names"
+
+- name: Configure for VirtualBox
+  include: virtualbox.yml
+  when: "'virtualbox' in group_names" 
+  
+- name: Cleanup ssh key under root directory
+  command: "rm -rf {{ item }}"
+  with_items:
+    - '/root/.ssh/authorized_keys'
+
+- name: Change root password
+  user:
+    name: root
+    update_password: always
+    password: '!'
+
+- name: clean up logfiles
+  command: "rm -rf {{ item }}"
+  with_items:
+    - '/var/log/auth.log'
+    - '/var/log/sudo.log'
+...  

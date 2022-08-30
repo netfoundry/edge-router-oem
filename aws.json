@@ -1,0 +1,55 @@
+{
+    "variables": {
+        "ssh_username": "ziggy",
+        "working_directory": ".",
+        "build_name": "{{env `BUILD_NAME`}}",
+        "build_version": "{{env `VERSION_NUMBER`}}"
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "assume_role": {
+              "role_arn"    :  "arn:aws:iam::925908137963:role/ops-mgmt-admin"
+            },
+            "shutdown_behavior": "terminate",
+            "region": "us-east-1",
+            "ami_name": "{{ user `build_name`}}-{{ user `build_version`}}",
+            "ssh_username": "{{user `ssh_username`}}",
+            "instance_type": "m5.large",
+            "associate_public_ip_address": true,
+            "source_ami_filter": {
+                "filters": {
+                  "virtualization-type": "hvm",
+                  "architecture": "x86_64",
+                  "image-type": "machine",
+                  "name": "nf-ub-*"
+                },
+                "owners": "679593333241",
+                "most_recent": true
+            },    
+            "launch_block_device_mappings": [
+                {
+                  "device_name": "/dev/sda1",
+                  "volume_size": 40,
+                  "volume_type": "gp2",
+                  "delete_on_termination": true
+                }
+              ],
+            "tags":{
+                "Name": "{{ user `build_name`}}-{{ user `build_version`}}"
+            }
+      }
+    ],
+    "provisioners": [
+        {
+          "type": "ansible",
+          "groups": ["aws"],
+          "user": "{{user `ssh_username`}}",
+          "playbook_file": "{{user `working_directory`}}/ansible/image-build.yml",
+          "extra_arguments": [
+            "--extra-vars", "build_version={{user `build_version`}}",
+            "-v"
+          ]
+        }
+    ]
+}

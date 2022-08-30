@@ -1,0 +1,8 @@
+---
+
+- name: Silence the Ubuntu login
+  file:
+    path: /home/ziggy/.hushlogin
+    state: touch 
+
+...
