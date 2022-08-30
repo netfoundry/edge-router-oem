@@ -13,14 +13,14 @@ The OEM process uses two tools, Packer & Ansible & is available Linux Only(due t
     GCP - https://www.packer.io/plugins/builders/googlecompute
     VirtualBox - https://www.packer.io/plugins/builders/virtualbox/ovf
 
-    To download packer see: https://www.packer.io/downloads
+To download packer see: https://www.packer.io/downloads
 
 
 **Ansible:**
 
     This tool, from RedHat is used to provide a single source configuration.  Find out more information at https://www.ansible.com/. NetFoundry provides a base playbook to allow customer to add configuration to any platform.
 
-    To install ansible please see: https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html
+To install ansible please see: https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html
 
 
 
