@@ -1,7 +1,7 @@
 # NetFoundry Edge Router OEM Image Tooling #
 This documentation is for customers of the NetFoundry NPaaS (https://nfconsole.io) that wish to create their own branded and modified renditon of the available NetFoundry Edge Router image located in various different cloud marketplaces as well for bare-metal hypervisors.  Please see the available images and links to cloud marketplaces at (https://netfoundry.io/downloads). 
 
-This utility continues the workflow which has established the image containing a complete OS (Ubuntu 20.04 LTS), kernel configurations, CIS Hardening, required application installation and updates, and the OpenZiti (https://github.com/openziti) Edge Router and supporting applications.  This utility uses two tools: Packer and Ansible.  It is only available for Linux/*nix due to the requirement for running Ansible.
+This utility continues the workflow which has established the image containing a complete OS (Ubuntu 22.04 LTS), kernel configurations, CIS Hardening, required application installation and updates, and the OpenZiti (https://github.com/openziti) Edge Router and supporting applications.  This utility uses two tools: Packer and Ansible.  It is only available for Linux/*nix due to the requirement for running Ansible.
 
 **Packer:**
 This tool, created and maintained by Hashicorp, handles launching a virtual machine in various platforms and producing an "image" that usable in each.  Find out more information at (https://www.packer.io/).  NetFoundry provides some example configurations based on the following plugins:
