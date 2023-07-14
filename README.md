@@ -9,6 +9,7 @@ This tool, created and maintained by Hashicorp, handles launching a virtual mach
 2. Azure - https://www.packer.io/plugins/builders/azure
 3. GCP - https://www.packer.io/plugins/builders/googlecompute
 4. VirtualBox - https://www.packer.io/plugins/builders/virtualbox/ovf
+
 To download and install Packer see: https://www.packer.io/downloads
 
 **Ansible:**
